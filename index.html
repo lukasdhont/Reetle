@@ -632,10 +632,7 @@
                 message.innerText = `Verander exact 1 letter ten opzichte van ${currentWord.toUpperCase()}`;
                 return;
             }
-            if (history.includes(currentGuess)) {
-                message.innerText = "Woord al gebruikt.";
-                return;
-            }
+            // De geschiedenis check ("Woord al gebruikt") is hier nu weggehaald!
 
             history.push(currentGuess);
             currentGuess = ""; 
