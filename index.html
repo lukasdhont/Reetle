@@ -44,3 +44,658 @@
         #test-indicator {
             background-color: #dc2626;
             color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .target-box {
+            color: #777;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        #ladder-container {
+            flex-grow: 1; 
+            width: 100%;
+            max-width: 350px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 10px;
+            mask-image: linear-gradient(to top, black 85%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to top, black 85%, transparent 100%);
+            overflow-y: auto; 
+            padding-top: 10px;
+        }
+
+        #ladder {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .word-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            width: 100%;
+            max-width: 260px; 
+            margin: 0 auto;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .tile {
+            aspect-ratio: 1; 
+            background-color: var(--tile-bg);
+            border: 2px solid var(--tile-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 2px;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .word-row.start .tile { border-color: #00b4d8; color: #00b4d8; }
+        .word-row.end .tile { border-color: var(--success); color: var(--success); background-color: #e6f7ef; }
+        
+        .tile.correct-pos {
+            background-color: var(--correct-pink);
+            border-color: var(--correct-pink);
+            color: #1a1a1a !important; 
+        }
+
+        #message-area {
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        #message {
+            color: #ff6b6b;
+            font-weight: bold;
+            min-height: 24px;
+            margin-bottom: 5px;
+        }
+
+        .btn-test {
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+        .btn-test:hover { background-color: #b91c1c; }
+
+        #keyboard {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--keyboard-bg);
+            padding: 8px 3px;
+            border-radius: 8px;
+            box-sizing: border-box;
+            user-select: none; 
+            margin-top: auto; 
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+        .keyboard-row:last-child { margin-bottom: 0; }
+
+        .key {
+            background-color: var(--key-bg);
+            color: var(--key-text);
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            height: 45px;
+            flex-grow: 1;
+            flex-basis: 0; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.1s;
+            -webkit-tap-highlight-color: transparent; 
+        }
+        .key:active { background-color: #e0e0e0; }
+        .key.large { flex-grow: 1.5; font-size: 0.8rem; }
+        .key.backspace { flex-grow: 1.2; font-size: 1.3rem; }
+
+        #loading { font-size: 1.2rem; margin-top: 50px; color: #777; }
+        .hidden { display: none !important; }
+        
+        /* MODAL STYLES */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: #ffffff;
+            color: #121213;
+            padding: 25px;
+            border-radius: 14px;
+            width: 90%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 4px 23px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .modal h2 { margin-top: 5px; font-size: 1.5rem; }
+        .modal h3 { font-size: 1.8rem; margin: 10px 0; letter-spacing: 1px; }
+        .close-btn {
+            position: absolute;
+            top: 10px; right: 15px;
+            font-size: 1.5rem; cursor: pointer; color: #777;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .stat-box { display: flex; flex-direction: column; align-items: center; }
+        .stat-val { font-size: 1.6rem; font-weight: bold; }
+        .stat-lbl { font-size: 0.7rem; color: #666; text-transform: uppercase; margin-top: 2px; line-height: 1.1; }
+        
+        .dist-title { font-weight: bold; text-align: left; margin: 15px 0 5px 0; font-size: 0.9rem; }
+        .dist-row { display: flex; align-items: center; margin-bottom: 4px; font-size: 0.85rem; }
+        .dist-lbl { width: 25px; text-align: right; padding-right: 8px; font-weight: bold; }
+        .dist-bar-container { flex-grow: 1; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
+        .dist-bar { background: #787c7e; color: white; text-align: right; padding-right: 5px; font-weight: bold; font-size: 0.8rem; width: 0%; min-width: 20px; box-sizing: border-box; border-radius: 3px; }
+        .dist-bar.current-win { background: #3b82f6; } 
+
+        .countdown { margin-top: 15px; font-size: 0.9rem; color: #555; font-weight: bold; }
+        .copy-btn { color: #3b82f6; text-decoration: underline; cursor: pointer; margin: 10px 0; display: inline-block; font-size: 0.9rem; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <h1>REETLE</h1>
+    <div id="test-indicator">[TEST MODUS]</div>
+    <div class="target-box">DOEL: REET</div>
+
+    <div id="loading">Jouw eigen woordenlijst laden... 📖</div>
+
+    <div id="game-container" class="hidden">
+        <div id="ladder-container">
+            <div id="ladder"></div>
+        </div>
+
+        <div id="message-area">
+            <div id="message"></div>
+            <button class="btn-test" onclick="forceNewWord()">🔄 VOLGEND TESTWOORD</button>
+        </div>
+
+        <div id="keyboard">
+            <div class="keyboard-row">
+                <button class="key" data-key="q">q</button>
+                <button class="key" data-key="w">w</button>
+                <button class="key" data-key="e">e</button>
+                <button class="key" data-key="r">r</button>
+                <button class="key" data-key="t">t</button>
+                <button class="key" data-key="y">y</button>
+                <button class="key" data-key="u">u</button>
+                <button class="key" data-key="i">i</button>
+                <button class="key" data-key="o">o</button>
+                <button class="key" data-key="p">p</button>
+            </div>
+            <div class="keyboard-row">
+                <div style="flex: 0.5;"></div> 
+                <button class="key" data-key="a">a</button>
+                <button class="key" data-key="s">s</button>
+                <button class="key" data-key="d">d</button>
+                <button class="key" data-key="f">f</button>
+                <button class="key" data-key="g">g</button>
+                <button class="key" data-key="h">h</button>
+                <button class="key" data-key="j">j</button>
+                <button class="key" data-key="k">k</button>
+                <button class="key" data-key="l">l</button>
+                <div style="flex: 0.5;"></div>
+            </div>
+            <div class="keyboard-row">
+                <button class="key large" data-key="enter">Enter</button>
+                <button class="key" data-key="z">z</button>
+                <button class="key" data-key="x">x</button>
+                <button class="key" data-key="c">c</button>
+                <button class="key" data-key="v">v</button>
+                <button class="key" data-key="b">b</button>
+                <button class="key" data-key="n">n</button>
+                <button class="key" data-key="m">m</button>
+                <button class="key backspace" data-key="backspace">⌫</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="stats-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <span class="close-btn" onclick="toggleModal(false)">×</span>
+            <h2>Gefeliciteerd!</h2>
+            <h3 id="modal-route-title">START to REET</h3>
+            <p style="margin: 10px 0; font-size: 1.1rem;">
+                Je gebruikte <strong id="modal-guesses">0</strong> stappen.<br>
+                <span style="font-size: 0.95rem; color: #555;">De beste oplossing was <strong id="modal-best">0</strong> stappen.</span>
+            </p>
+            <div class="copy-btn" onclick="copyResults()">Resultaten kopiëren</div>
+            
+            <hr style="border: 0; border-top: 1px solid #ccc; margin: 15px 0;">
+            
+            <div class="stats-grid">
+                <div class="stat-box"><div class="stat-val" id="stat-wins">0</div><div class="stat-lbl">Wins</div></div>
+                <div class="stat-box"><div class="stat-val" id="stat-avg">0.0</div><div class="stat-lbl">Gem. Extra Stappen</div></div>
+                <div class="stat-box"><div class="stat-val" id="stat-streak">0</div><div class="stat-lbl">Huidige Streak</div></div>
+                <div class="stat-box"><div class="stat-val" id="stat-best">0</div><div class="stat-lbl">Beste Streak</div></div>
+            </div>
+
+            <div class="dist-title">Verdeling Extra Stappen:</div>
+            <div id="dist-container"></div>
+
+            <div class="countdown" id="modal-countdown">Nieuw woord over: --:--:--</div>
+            <button class="btn-test" style="margin-top:15px; width:100%;" onclick="toggleModal(false); forceNewWord();">🔄 SPEEL NOG EEN TESTRONDE</button>
+        </div>
+    </div>
+
+    <script>
+        const TARGET_WORD = "reet";
+        let WORD_LIST = [];
+        let WORD_SET = new Set();
+        let history = [];
+        let gameSolved = false;
+        let BEST_SOLUTION_STEPS = 0;
+        let currentGuess = ""; 
+
+        let stats = JSON.parse(localStorage.getItem('reetle_stats')) || {
+            wins: 0, streak: 0, bestStreak: 0, totalExtraGuesses: 0,
+            distribution: {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, "6+":0},
+            lastPlayedDate: null, lastSolvedDate: null
+        };
+
+        async function loadDictionary() {
+            try {
+                // Nu pakt hij veilig jouw eigen lokale woorden.txt bestand!
+                const response = await fetch('woorden.txt');
+                
+                if (!response.ok) {
+                    throw new Error("woorden.txt kon niet worden geladen. Staat het bestand in GitHub?");
+                }
+
+                const text = await response.text();
+                
+                WORD_LIST = text.split('\n')
+                    .map(word => word.trim().toLowerCase())
+                    .filter(word => word.length === 4 && /^[a-z]+$/.test(word));
+
+                if (!WORD_LIST.includes(TARGET_WORD)) WORD_LIST.push(TARGET_WORD);
+                WORD_SET = new Set(WORD_LIST); 
+
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('game-container').classList.remove('hidden');
+                
+                const testGame = JSON.parse(localStorage.getItem('reetle_test_game'));
+                if (testGame && testGame.active) {
+                    loadTestGame(testGame);
+                } else {
+                    initDailyGame();
+                }
+                
+                initKeyboard(); 
+                initPhysicalKeyboard(); 
+                
+            } catch (error) {
+                document.getElementById('loading').innerText = "Fout: " + error.message;
+            }
+        }
+
+        function getShortestPath(start, target) {
+            if (start === target) return 0;
+            let queue = [{ word: start, steps: 0 }];
+            let visited = new Set([start]);
+            const alphabet = "abcdefghijklmnopqrstuvwxyz";
+
+            while (queue.length > 0) {
+                let current = queue.shift();
+                for (let i = 0; i < 4; i++) {
+                    for (let j = 0; j < 26; j++) {
+                        let char = alphabet[j];
+                        if (char === current.word[i]) continue;
+                        let nextWord = current.word.substring(0, i) + char + current.word.substring(i + 1);
+                        if (WORD_SET.has(nextWord) && !visited.has(nextWord)) {
+                            if (nextWord === target) return current.steps + 1;
+                            visited.add(nextWord);
+                            queue.push({ word: nextWord, steps: current.steps + 1 });
+                        }
+                    }
+                }
+            }
+            return -1; 
+        }
+
+        function forceNewWord() {
+            localStorage.removeItem('reetle_current_game'); 
+            currentGuess = ""; 
+            document.getElementById('message').innerText = "";
+
+            let startWord, minSteps;
+            let attempts = 0;
+            do {
+                startWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)];
+                minSteps = getShortestPath(startWord, TARGET_WORD);
+                attempts++;
+                if (attempts > 1000) {
+                    document.getElementById('message').innerText = "Te weinig woorden om een route te maken!";
+                    return;
+                }
+            } while (startWord === TARGET_WORD || minSteps === -1);
+
+            BEST_SOLUTION_STEPS = minSteps;
+            history = [startWord];
+            gameSolved = false;
+
+            localStorage.setItem('reetle_test_game', JSON.stringify({
+                active: true, history: history, solved: false, bestSteps: BEST_SOLUTION_STEPS
+            }));
+
+            renderLadder();
+        }
+
+        function loadTestGame(testGame) {
+            history = testGame.history;
+            gameSolved = testGame.solved;
+            BEST_SOLUTION_STEPS = testGame.bestSteps;
+            currentGuess = ""; 
+            if (gameSolved) {
+                setTimeout(() => toggleModal(true), 500);
+            }
+            renderLadder();
+            startCountdown();
+        }
+
+        function initDailyGame() {
+            const todayStr = new Date().toDateString();
+            let hash = 0;
+            for (let i = 0; i < todayStr.length; i++) { hash = todayStr.charCodeAt(i) + ((hash << 5) - hash); }
+            let index = Math.abs(hash) % WORD_LIST.length;
+            
+            let startWord, minSteps;
+            let attempts = 0;
+            do {
+                startWord = WORD_LIST[index];
+                minSteps = getShortestPath(startWord, TARGET_WORD);
+                index = (index + 1) % WORD_LIST.length;
+                attempts++;
+                if (attempts > 1000) {
+                    document.getElementById('message').innerText = "Te weinig woorden om een route te maken!";
+                    return;
+                }
+            } while (startWord === TARGET_WORD || minSteps === -1);
+
+            BEST_SOLUTION_STEPS = minSteps;
+            currentGuess = ""; 
+
+            const savedGame = JSON.parse(localStorage.getItem('reetle_current_game'));
+            if (savedGame && savedGame.date === todayStr) {
+                history = savedGame.history;
+                gameSolved = savedGame.solved;
+                if (gameSolved) {
+                    setTimeout(() => toggleModal(true), 500);
+                }
+            } else {
+                history = [startWord];
+                gameSolved = false;
+                saveCurrentGame();
+            }
+
+            renderLadder();
+            startCountdown();
+        }
+
+        function saveCurrentGame() {
+            const isTesting = JSON.parse(localStorage.getItem('reetle_test_game'));
+            if (isTesting && isTesting.active) {
+                localStorage.setItem('reetle_test_game', JSON.stringify({
+                    active: true, history: history, solved: gameSolved, bestSteps: BEST_SOLUTION_STEPS
+                }));
+            } else {
+                const todayStr = new Date().toDateString();
+                localStorage.setItem('reetle_current_game', JSON.stringify({
+                    date: todayStr, history: history, solved: gameSolved
+                }));
+            }
+        }
+
+        function renderLadder() {
+            const ladder = document.getElementById('ladder');
+            ladder.innerHTML = '';
+            
+            history.forEach((word, index) => {
+                const row = document.createElement('div');
+                row.className = 'word-row';
+                if (index === 0) row.classList.add('start');
+                if (word === TARGET_WORD) row.classList.add('end');
+                
+                for (let i = 0; i < 4; i++) {
+                    const tile = document.createElement('div');
+                    tile.className = 'tile';
+                    const letter = word[i];
+                    tile.innerText = letter;
+                    
+                    if (letter === TARGET_WORD[i]) {
+                        tile.classList.add('correct-pos');
+                    }
+                    row.appendChild(tile);
+                }
+                ladder.appendChild(row);
+            });
+            
+            if (!gameSolved) {
+                const inputRow = document.createElement('div');
+                inputRow.className = 'word-row input-row';
+                
+                for (let i = 0; i < 4; i++) {
+                    const tile = document.createElement('div');
+                    tile.className = 'tile';
+                    tile.innerText = currentGuess[i] || ""; 
+                    inputRow.appendChild(tile);
+                }
+                ladder.appendChild(inputRow);
+            }
+            
+            setTimeout(() => {
+                const container = document.getElementById('ladder-container');
+                container.scrollTop = container.scrollHeight;
+            }, 50);
+        }
+
+        function initKeyboard() {
+            const keys = document.querySelectorAll('.key');
+            keys.forEach(key => {
+                key.addEventListener('click', () => {
+                    if (gameSolved) return; 
+                    const keyValue = key.getAttribute('data-key');
+                    handleInput(keyValue);
+                });
+            });
+        }
+        
+        function initPhysicalKeyboard() {
+            document.addEventListener('keydown', (e) => {
+                if (gameSolved) return;
+                
+                if (e.key === 'Enter') {
+                    handleInput('enter');
+                } else if (e.key === 'Backspace') {
+                    handleInput('backspace');
+                } else if (e.key.length === 1 && /[a-z]/i.test(e.key)) {
+                    handleInput(e.key.toLowerCase());
+                }
+            });
+        }
+        
+        function handleInput(key) {
+            const message = document.getElementById('message');
+            message.innerText = ""; 
+
+            if (key === 'enter') {
+                submitGuess();
+            } else if (key === 'backspace') {
+                currentGuess = currentGuess.slice(0, -1);
+                renderLadder();
+            } else if (currentGuess.length < 4) {
+                currentGuess += key;
+                renderLadder();
+            }
+        }
+
+        function submitGuess() {
+            const message = document.getElementById('message');
+            const currentWord = history[history.length - 1];
+
+            if (currentGuess.length !== 4) {
+                message.innerText = "Exact 4 letters.";
+                return;
+            }
+            if (!WORD_SET.has(currentGuess)) {
+                message.innerText = `"${currentGuess.toUpperCase()}" onbekend.`;
+                return;
+            }
+            
+            let diff = 0;
+            for (let i = 0; i < 4; i++) { if (currentWord[i] !== currentGuess[i]) diff++; }
+            if (diff !== 1) {
+                message.innerText = `Verander exact 1 letter ten opzichte van ${currentWord.toUpperCase()}`;
+                return;
+            }
+            if (history.includes(currentGuess)) {
+                message.innerText = "Woord al gebruikt.";
+                return;
+            }
+
+            history.push(currentGuess);
+            currentGuess = ""; 
+            renderLadder();
+            saveCurrentGame();
+
+            if (history[history.length - 1] === TARGET_WORD) {
+                gameSolved = true;
+                saveCurrentGame();
+                updateStats();
+                setTimeout(() => toggleModal(true), 600);
+            }
+        }
+
+        function updateStats() {
+            const totalSteps = history.length - 1;
+            let extraGuesses = totalSteps - BEST_SOLUTION_STEPS;
+            if (extraGuesses < 0) extraGuesses = 0;
+
+            stats.wins += 1;
+            stats.totalExtraGuesses += extraGuesses;
+            
+            stats.streak += 1;
+            if (stats.streak > stats.bestStreak) stats.bestStreak = stats.streak;
+
+            const distKey = extraGuesses >= 6 ? "6+" : extraGuesses.toString();
+            stats.distribution[distKey] = (stats.distribution[distKey] || 0) + 1;
+            stats.lastSolvedDate = new Date().toDateString();
+
+            localStorage.setItem('reetle_stats', JSON.stringify(stats));
+            localStorage.setItem('reetle_current_extra', distKey); 
+        }
+
+        function toggleModal(show) {
+            const modal = document.getElementById('stats-modal');
+            if (show) {
+                document.getElementById('modal-route-title').innerText = `${history[0].toUpperCase()} to REET`;
+                document.getElementById('modal-guesses').innerText = history.length - 1;
+                document.getElementById('modal-best').innerText = BEST_SOLUTION_STEPS;
+                
+                document.getElementById('stat-wins').innerText = stats.wins;
+                document.getElementById('stat-avg').innerText = stats.wins > 0 ? (stats.totalExtraGuesses / stats.wins).toFixed(2) : 0;
+                document.getElementById('stat-streak').innerText = stats.streak;
+                document.getElementById('stat-best').innerText = stats.bestStreak;
+
+                const distContainer = document.getElementById('dist-container');
+                distContainer.innerHTML = '';
+                const maxVal = Math.max(...Object.values(stats.distribution), 1);
+                const currentExtraKey = localStorage.getItem('reetle_current_extra');
+
+                Object.keys(stats.distribution).forEach(key => {
+                    const val = stats.distribution[key];
+                    const pct = (val / maxVal) * 100;
+                    const isCurrentWin = (key === currentExtraKey);
+
+                    distContainer.innerHTML += `
+                        <div class="dist-row">
+                            <div class="dist-lbl">${key}</div>
+                            <div class="dist-bar-container">
+                                <div class="dist-bar ${isCurrentWin ? 'current-win' : ''}" style="width: ${Math.max(pct, 8)}%">${val}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function startCountdown() {
+            setInterval(() => {
+                const now = new Date();
+                const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+                const diff = tomorrow - now;
+                const hours = String(Math.floor(diff / 3600000)).padStart(2, '0');
+                const minutes = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+                const seconds = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+                document.getElementById('modal-countdown').innerText = `Nieuw woord over: ${hours}:${minutes}:${seconds}`;
+            }, 1000);
+        }
+
+        function copyResults() {
+            const steps = history.length - 1;
+            let text = `REETLE - ${history[0].toUpperCase()} to REET in ${steps} stappen! 🚽\n(Beste route: ${BEST_SOLUTION_STEPS})\n\n`;
+            history.forEach((w, i) => { text += `${i + 1}. ${w.toUpperCase()}\n`; });
+            text += "\nSpeel ook mee op Reetle!";
+            navigator.clipboard.writeText(text).then(() => { alert("Resultaten gekopieerd naar klembord!"); });
+        }
+
+        loadDictionary();
+    </script>
+</body>
+</html>
