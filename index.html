@@ -8,11 +8,10 @@
         :root {
             --primary: #d4a373;
             --background: #f0f0f0; 
-            --tile-border: #1a1a1a; /* Zwarte randen */
-            --tile-bg: transparent; /* Zelfde achtergrondkleur als de pagina */
+            --tile-border: #1a1a1a; 
+            --tile-bg: transparent; 
             --text-color: #1a1a1a;
             
-            /* Een warmere, meer perzik-achtige huidskleur */
             --skin-tone: #fca68e; 
             
             --keyboard-bg: #d3d6da;
@@ -35,37 +34,35 @@
             overflow-x: hidden;
         }
 
-        /* Titel layout met de perzik SVG ernaast */
         .title-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            margin: 5px 0 2px 0;
+            gap: 12px;
+            margin: 10px 0 5px 0;
         }
 
         h1 {
             color: #1a1a1a;
             margin: 0;
-            font-size: 2.2rem;
-            letter-spacing: 1px;
+            font-size: 3.2rem;
+            letter-spacing: 1.5px;
         }
 
         .peach-icon {
-            width: 36px;
-            height: 36px;
-            /* Vul de perzik met exact dezelfde huidskleur als de blokjes */
+            width: 48px;
+            height: 48px;
             fill: var(--skin-tone); 
             stroke: #1a1a1a;
-            stroke-width: 2.5;
+            stroke-width: 1.5;
             stroke-linecap: round;
             stroke-linejoin: round;
         }
 
         .peach-leaf {
-            fill: #387c44; /* Groene blaadjes */
+            fill: #387c44; 
             stroke: #1a1a1a;
-            stroke-width: 2.5;
+            stroke-width: 1.5;
         }
         
         #test-indicator {
@@ -80,8 +77,8 @@
 
         .target-box {
             color: #777;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
+            font-size: 1rem;
+            margin-bottom: 20px;
             font-weight: bold;
         }
 
@@ -102,7 +99,6 @@
             align-items: center;
             justify-content: flex-start;
             margin-bottom: 10px;
-            /* Mist effect is hier weggehaald! */
             overflow-y: auto; 
             padding-top: 10px;
         }
@@ -140,7 +136,6 @@
             transition: background-color 0.2s, border-color 0.2s;
         }
 
-        /* Winstwoord is nu volledig in de huidskleur, inclusief zwarte tekst en zwarte rand */
         .word-row.end .tile { 
             border-color: #1a1a1a; 
             color: #1a1a1a; 
@@ -149,7 +144,7 @@
         
         .tile.correct-pos {
             background-color: var(--skin-tone);
-            border-color: #1a1a1a; /* Zwarte rand blijft behouden */
+            border-color: #1a1a1a; 
             color: #1a1a1a !important; 
         }
 
@@ -171,11 +166,11 @@
             background-color: #dc2626;
             color: white;
             border: none;
-            padding: 8px 15px;
+            padding: 10px 18px;
             border-radius: 5px;
             font-weight: bold;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 1rem;
             width: 100%;
         }
         .btn-test:hover { background-color: #b91c1c; }
@@ -184,7 +179,7 @@
             width: 100%;
             max-width: 500px;
             background-color: var(--keyboard-bg);
-            padding: 8px 3px;
+            padding: 10px 5px;
             border-radius: 8px;
             box-sizing: border-box;
             user-select: none; 
@@ -206,7 +201,7 @@
             border-radius: 4px;
             font-size: 1.1rem;
             font-weight: bold;
-            height: 45px;
+            height: 48px;
             flex-grow: 1;
             flex-basis: 0; 
             display: flex;
@@ -218,13 +213,12 @@
             -webkit-tap-highlight-color: transparent; 
         }
         .key:active { background-color: #e0e0e0; }
-        .key.large { flex-grow: 1.5; font-size: 0.8rem; }
-        .key.backspace { flex-grow: 1.2; font-size: 1.3rem; }
+        .key.large { flex-grow: 1.5; font-size: 0.9rem; }
+        .key.backspace { flex-grow: 1.2; font-size: 1.4rem; }
 
         #loading { font-size: 1.2rem; margin-top: 50px; color: #777; }
         .hidden { display: none !important; }
         
-        /* MODAL STYLES */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
