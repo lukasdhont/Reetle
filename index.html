@@ -104,7 +104,6 @@
         }
         button:hover { background-color: #bfa054; }
         
-        /* Styling voor de testknop */
         .btn-test {
             background-color: #dc2626;
             color: white;
@@ -181,7 +180,7 @@
     <h1>REETLE <span style="font-size: 1rem; color: #dc2626;">[TEST MODUS]</span></h1>
     <div class="subtitle">Bereik REET in zo min mogelijk stappen!</div>
 
-    <div id="loading">Woordenboek laden... 📖</div>
+    <div id="loading">Jouw eigen woorden.txt laden... 📖</div>
 
     <div id="game-container" class="hidden">
         <div class="target-box">DOEL: REET</div>
@@ -189,7 +188,6 @@
         <div id="input-area">
             <input type="text" id="word-input" maxlength="4" placeholder="Typ woord..." autofocus>
             <button onclick="submitWord()">ZET STAP</button>
-            
             <button class="btn-test" onclick="forceNewWord()">🔄 VOLGEND TESTWOORD</button>
         </div>
         <div id="message"></div>
@@ -234,8 +232,6 @@
         let gameSolved = false;
         let BEST_SOLUTION_STEPS = 0;
 
-        const BLACKLIST = ["ried", "nijk", "kaat", "haga"]; 
-
         let stats = JSON.parse(localStorage.getItem('reetle_stats')) || {
             wins: 0, streak: 0, bestStreak: 0, totalExtraGuesses: 0,
             distribution: {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, "6+":0},
@@ -244,20 +240,26 @@
 
         async function loadDictionary() {
             try {
-                const response = await fetch('https://raw.githubusercontent.com/OpenTaal/opentaal-wordlist/master/wordlist.txt');
+                // Nu haalt de game jouw eigen, schone woorden.txt op!
+                const response = await fetch('woorden.txt');
+                
+                if (!response.ok) {
+                    throw new Error("Kon woorden.txt niet vinden. Heb je het bestand aangemaakt?");
+                }
+
                 const text = await response.text();
                 
                 WORD_LIST = text.split('\n')
                     .map(word => word.trim().toLowerCase())
-                    .filter(word => word.length === 4 && /^[a-z]+$/.test(word) && !BLACKLIST.includes(word));
+                    .filter(word => word.length === 4 && /^[a-z]+$/.test(word));
 
+                // Voeg REET sowieso toe voor de zekerheid
                 if (!WORD_LIST.includes(TARGET_WORD)) WORD_LIST.push(TARGET_WORD);
                 WORD_SET = new Set(WORD_LIST); 
 
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('game-container').classList.remove('hidden');
                 
-                // We kijken eerst of er een test-sessie actief is, anders laden we de daily
                 const testGame = JSON.parse(localStorage.getItem('reetle_test_game'));
                 if (testGame && testGame.active) {
                     loadTestGame(testGame);
@@ -265,7 +267,7 @@
                     initDailyGame();
                 }
             } catch (error) {
-                document.getElementById('loading').innerText = "Fout bij laden van woordenboek.";
+                document.getElementById('loading').innerText = "Fout: " + error.message;
             }
         }
 
@@ -293,17 +295,27 @@
             return -1; 
         }
 
-        // Functie die een random woord kiest om direct te testen
         function forceNewWord() {
-            localStorage.removeItem('reetle_current_game'); // Wis daily
+            localStorage.removeItem('reetle_current_game'); 
             document.getElementById('word-input').disabled = false;
             document.getElementById('message').innerText = "";
 
             let startWord;
             let minSteps;
+            let attempts = 0;
+            
+            // Zoek een woord met een geldig pad. 
+            // Als je woordenlijst te klein is, kan dit even duren.
             do {
                 startWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)];
                 minSteps = getShortestPath(startWord, TARGET_WORD);
+                attempts++;
+                
+                // Veiligheid: Voorkom dat de browser crasht als er echt geen woord te vinden is
+                if (attempts > 500) {
+                    document.getElementById('message').innerText = "Fout: Voeg meer woorden toe aan je lijst om routes te maken!";
+                    return;
+                }
             } while (startWord === TARGET_WORD || minSteps === -1);
 
             BEST_SOLUTION_STEPS = minSteps;
@@ -336,10 +348,16 @@
             let index = Math.abs(hash) % WORD_LIST.length;
             
             let startWord, minSteps;
+            let attempts = 0;
             do {
                 startWord = WORD_LIST[index];
                 minSteps = getShortestPath(startWord, TARGET_WORD);
                 index = (index + 1) % WORD_LIST.length;
+                attempts++;
+                if (attempts > 500) {
+                    document.getElementById('message').innerText = "Fout: Niet genoeg woorden in lijst om route te maken.";
+                    return;
+                }
             } while (startWord === TARGET_WORD || minSteps === -1);
 
             BEST_SOLUTION_STEPS = minSteps;
@@ -423,7 +441,6 @@
         }
 
         function updateStats() {
-            // In testmodus omzeilen we de check "1 winst per dag" zodat je statistieken kunt doortesten
             const totalSteps = history.length - 1;
             let extraGuesses = totalSteps - BEST_SOLUTION_STEPS;
             if (extraGuesses < 0) extraGuesses = 0;
@@ -431,7 +448,6 @@
             stats.wins += 1;
             stats.totalExtraGuesses += extraGuesses;
             
-            // Simpele streak verhoging voor testmodus
             stats.streak += 1;
             if (stats.streak > stats.bestStreak) stats.bestStreak = stats.streak;
 
