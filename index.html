@@ -8,16 +8,16 @@
         :root {
             --primary: #d4a373;
             --background: #f0f0f0; 
-            --tile-border: #1a1a1a; /* Zwarte randen voor de vakjes */
+            --tile-border: #1a1a1a; /* Zwarte randen */
             --tile-bg: transparent; /* Zelfde achtergrondkleur als de pagina */
             --text-color: #1a1a1a;
-            /* De aangepaste, warmere huidskleur */
-            --skin-tone: #fbe0cc; 
+            
+            /* Een warmere, meer perzik-achtige huidskleur */
+            --skin-tone: #fca68e; 
+            
             --keyboard-bg: #d3d6da;
             --key-bg: #ffffff;
             --key-text: #1a1a1a;
-            /* Success groen wordt niet meer gebruikt op de tiles, maar we houden de variabele */
-            --success: #52b788;
         }
         
         body {
@@ -35,13 +35,37 @@
             overflow-x: hidden;
         }
 
+        /* Titel layout met de perzik SVG ernaast */
+        .title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 5px 0 2px 0;
+        }
+
         h1 {
             color: #1a1a1a;
-            margin: 5px 0 2px 0;
-            font-size: 2rem;
+            margin: 0;
+            font-size: 2.2rem;
             letter-spacing: 1px;
-            text-align: center;
-            /* De capitalization is nu in de HTML aangepast, geen text-transform meer nodig */
+        }
+
+        .peach-icon {
+            width: 36px;
+            height: 36px;
+            /* Vul de perzik met exact dezelfde huidskleur als de blokjes */
+            fill: var(--skin-tone); 
+            stroke: #1a1a1a;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .peach-leaf {
+            fill: #387c44; /* Groene blaadjes */
+            stroke: #1a1a1a;
+            stroke-width: 2.5;
         }
         
         #test-indicator {
@@ -78,7 +102,7 @@
             align-items: center;
             justify-content: flex-start;
             margin-bottom: 10px;
-            /* De "mist" mask-image is verwijderd */
+            /* Mist effect is hier weggehaald! */
             overflow-y: auto; 
             padding-top: 10px;
         }
@@ -116,16 +140,16 @@
             transition: background-color 0.2s, border-color 0.2s;
         }
 
-        /* Winstwoord is nu volledig in huidskleur */
+        /* Winstwoord is nu volledig in de huidskleur, inclusief zwarte tekst en zwarte rand */
         .word-row.end .tile { 
-            border-color: var(--skin-tone); 
+            border-color: #1a1a1a; 
             color: #1a1a1a; 
             background-color: var(--skin-tone); 
         }
         
         .tile.correct-pos {
             background-color: var(--skin-tone);
-            border-color: var(--skin-tone);
+            border-color: #1a1a1a; /* Zwarte rand blijft behouden */
             color: #1a1a1a !important; 
         }
 
@@ -253,7 +277,16 @@
 </head>
 <body>
 
-    <h1>Reetle</h1>
+    <div class="title-container">
+        <h1>Reetle</h1>
+        <svg class="peach-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path class="peach-leaf" d="M12 5.5c-1-2.5-3-4-5-3.5-1.5.5-1.5 3 0 4.5 1.5 1.5 4 1.5 5-1z"/>
+            <path class="peach-leaf" d="M12 5.5c1-2.5 3-4 5-3.5 1.5.5 1.5 3 0 4.5-1.5 1.5-4 1.5-5-1z"/>
+            <path d="M12 21.5c-4 0-9-3.5-9-9 0-4.5 3-7 6.5-7 1.5 0 2.5.5 2.5.5s1-.5 2.5-.5c3.5 0 6.5 2.5 6.5 7 0 5.5-5 9-9 9z"/>
+            <path d="M12 21.5c0-4 1.5-7 3.5-9" fill="none"/>
+        </svg>
+    </div>
+    
     <div id="test-indicator">[TEST MODUS]</div>
     <div class="target-box">DOEL: REET</div>
 
@@ -694,7 +727,7 @@
 
         function copyResults() {
             const steps = history.length - 1;
-            let text = `REETLE - ${history[0].toUpperCase()} to REET in ${steps} stappen! 🚽\n(Beste route: ${BEST_SOLUTION_STEPS})\n\n`;
+            let text = `Reetle - ${history[0].toUpperCase()} to REET in ${steps} stappen! 🍑\n(Beste route: ${BEST_SOLUTION_STEPS})\n\n`;
             history.forEach((w, i) => { text += `${i + 1}. ${w.toUpperCase()}\n`; });
             text += "\nSpeel ook mee op Reetle!";
             navigator.clipboard.writeText(text).then(() => { alert("Resultaten gekopieerd naar klembord!"); });
