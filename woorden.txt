@@ -64,6 +64,7 @@ beet
 beft
 bekt
 belg
+bent
 berg
 berk
 berm
