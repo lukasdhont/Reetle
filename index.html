@@ -8,8 +8,8 @@
         :root {
             --primary: #d4a373;
             --background: #f0f0f0; 
-            --tile-border: #d3d6da;
-            --tile-bg: #ffffff;
+            --tile-border: #1a1a1a; /* Zwarte randen voor de vakjes */
+            --tile-bg: transparent; /* Zelfde achtergrondkleur als de pagina */
             --text-color: #1a1a1a;
             --correct-pink: #f8cccc; 
             --keyboard-bg: #d3d6da;
@@ -103,6 +103,7 @@
             aspect-ratio: 1; 
             background-color: var(--tile-bg);
             border: 2px solid var(--tile-border);
+            color: var(--text-color);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -113,7 +114,7 @@
             transition: background-color 0.2s, border-color 0.2s;
         }
 
-        .word-row.start .tile { border-color: #00b4d8; color: #00b4d8; }
+        /* Startwoord speciale opmaak is verwijderd, eindwoord is nog wel groen */
         .word-row.end .tile { border-color: var(--success); color: var(--success); background-color: #e6f7ef; }
         
         .tile.correct-pos {
@@ -347,7 +348,6 @@
 
         async function loadDictionary() {
             try {
-                // Nu pakt hij veilig jouw eigen lokale woorden.txt bestand!
                 const response = await fetch('woorden.txt');
                 
                 if (!response.ok) {
@@ -505,7 +505,6 @@
             history.forEach((word, index) => {
                 const row = document.createElement('div');
                 row.className = 'word-row';
-                if (index === 0) row.classList.add('start');
                 if (word === TARGET_WORD) row.classList.add('end');
                 
                 for (let i = 0; i < 4; i++) {
