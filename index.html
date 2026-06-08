@@ -113,7 +113,7 @@
             max-width: 300px;
         }
 
-        /* MODAL STYLES (STATISTIEKEN POPUP) */
+        /* MODAL STYLES */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -151,13 +151,12 @@
         .stat-val { font-size: 1.6rem; font-weight: bold; }
         .stat-lbl { font-size: 0.7rem; color: #666; text-transform: uppercase; margin-top: 2px; line-height: 1.1; }
         
-        /* Distributie Grafiek */
         .dist-title { font-weight: bold; text-align: left; margin: 15px 0 5px 0; font-size: 0.9rem; }
         .dist-row { display: flex; align-items: center; margin-bottom: 4px; font-size: 0.85rem; }
         .dist-lbl { width: 25px; text-align: right; padding-right: 8px; font-weight: bold; }
         .dist-bar-container { flex-grow: 1; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
         .dist-bar { background: #787c7e; color: white; text-align: right; padding-right: 5px; font-weight: bold; font-size: 0.8rem; width: 0%; min-width: 20px; box-sizing: border-box; border-radius: 3px; }
-        .dist-bar.current-win { background: #3b82f6; } /* Blauw voor de huidige winst */
+        .dist-bar.current-win { background: #3b82f6; }
 
         .countdown { margin-top: 15px; font-size: 0.9rem; color: #555; font-weight: bold; }
         .copy-btn { color: #3b82f6; text-decoration: underline; cursor: pointer; margin: 10px 0; display: inline-block; font-size: 0.9rem; }
@@ -189,7 +188,12 @@
             <span class="close-btn" onclick="toggleModal(false)">×</span>
             <h2>Gefeliciteerd!</h2>
             <h3 id="modal-route-title">START to REET</h3>
-            <p style="margin: 5px 0;">Je gebruikte <strong id="modal-guesses">0</strong> stappen.</p>
+            
+            <p style="margin: 10px 0; font-size: 1.1rem;">
+                Je gebruikte <strong id="modal-guesses">0</strong> stappen.<br>
+                <span style="font-size: 0.95rem; color: #555;">De beste oplossing was <strong id="modal-best">0</strong> stappen.</span>
+            </p>
+            
             <div class="copy-btn" onclick="copyResults()">Resultaten kopiëren</div>
             
             <hr style="border: 0; border-top: 1px solid #ccc; margin: 15px 0;">
@@ -211,21 +215,15 @@
     <script>
         const TARGET_WORD = "reet";
         let WORD_LIST = [];
+        let WORD_SET = new Set();
         let history = [];
         let gameSolved = false;
+        let BEST_SOLUTION_STEPS = 0;
 
-        // Ideale/beste oplossing (fictieve baseline, Poople gebruikt vaak 4 of 5 als par)
-        const BEST_SOLUTION_STEPS = 5; 
-
-        // LocalStorage stats structuur
         let stats = JSON.parse(localStorage.getItem('reetle_stats')) || {
-            wins: 0,
-            streak: 0,
-            bestStreak: 0,
-            totalExtraGuesses: 0,
+            wins: 0, streak: 0, bestStreak: 0, totalExtraGuesses: 0,
             distribution: {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, "6+":0},
-            lastPlayedDate: null,
-            lastSolvedDate: null
+            lastPlayedDate: null, lastSolvedDate: null
         };
 
         async function loadDictionary() {
@@ -238,6 +236,7 @@
                     .filter(word => word.length === 4 && /^[a-z]+$/.test(word));
 
                 if (!WORD_LIST.includes(TARGET_WORD)) WORD_LIST.push(TARGET_WORD);
+                WORD_SET = new Set(WORD_LIST); // Gebruikt voor snelle validatie in algoritme
 
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('game-container').classList.remove('hidden');
@@ -245,28 +244,59 @@
                 initDailyGame();
             } catch (error) {
                 document.getElementById('loading').innerText = "Fout bij laden van woordenboek.";
-                console.error(error);
             }
         }
 
-        // Genereer elke dag exact hetzelfde startwoord op basis van de datum
+        // ALGORITME: Berekent het kortst mogelijke pad tussen 2 woorden
+        function getShortestPath(start, target) {
+            if (start === target) return 0;
+            let queue = [{ word: start, steps: 0 }];
+            let visited = new Set([start]);
+            const alphabet = "abcdefghijklmnopqrstuvwxyz";
+
+            while (queue.length > 0) {
+                let current = queue.shift();
+                
+                // Genereer alle mogelijke 1-letter variaties van het huidige woord
+                for (let i = 0; i < 4; i++) {
+                    for (let j = 0; j < 26; j++) {
+                        let char = alphabet[j];
+                        if (char === current.word[i]) continue;
+                        
+                        let nextWord = current.word.substring(0, i) + char + current.word.substring(i + 1);
+                        
+                        if (WORD_SET.has(nextWord) && !visited.has(nextWord)) {
+                            if (nextWord === target) return current.steps + 1;
+                            visited.add(nextWord);
+                            queue.push({ word: nextWord, steps: current.steps + 1 });
+                        }
+                    }
+                }
+            }
+            return -1; // Geen route mogelijk
+        }
+
         function initDailyGame() {
             const todayStr = new Date().toDateString();
-            
-            // Simpele hashfunctie om een stabiel willekeurig woord te kiezen per datum
             let hash = 0;
             for (let i = 0; i < todayStr.length; i++) {
                 hash = todayStr.charCodeAt(i) + ((hash << 5) - hash);
             }
             let index = Math.abs(hash) % WORD_LIST.length;
             
-            let startWord = WORD_LIST[index];
-            while (startWord === TARGET_WORD) {
-                index = (index + 1) % WORD_LIST.length;
-                startWord = WORD_LIST[index];
-            }
+            let startWord;
+            let minSteps;
 
-            // Check of de speler vandaag al heeft gespeeld en opgeslagen in LocalStorage
+            // Zoek een woord, en check met het algoritme of de speler REET überhaupt kán bereiken
+            do {
+                startWord = WORD_LIST[index];
+                minSteps = getShortestPath(startWord, TARGET_WORD);
+                index = (index + 1) % WORD_LIST.length;
+            } while (startWord === TARGET_WORD || minSteps === -1);
+
+            // Sla de kortste route op in het geheugen
+            BEST_SOLUTION_STEPS = minSteps;
+
             const savedGame = JSON.parse(localStorage.getItem('reetle_current_game'));
             if (savedGame && savedGame.date === todayStr) {
                 history = savedGame.history;
@@ -288,9 +318,7 @@
         function saveCurrentGame() {
             const todayStr = new Date().toDateString();
             localStorage.setItem('reetle_current_game', JSON.stringify({
-                date: todayStr,
-                history: history,
-                solved: gameSolved
+                date: todayStr, history: history, solved: gameSolved
             }));
         }
 
@@ -319,9 +347,8 @@
             message.innerText = "";
 
             if (newWord.length !== 4) { message.innerText = "Exact 4 letters."; return; }
-            if (!WORD_LIST.includes(newWord)) { message.innerText = `"${newWord.toUpperCase()}" onbekend.`; return; }
+            if (!WORD_SET.has(newWord)) { message.innerText = `"${newWord.toUpperCase()}" onbekend.`; return; }
             
-            // Check 1 letter verschil
             let diff = 0;
             for (let i = 0; i < 4; i++) { if (currentWord[i] !== newWord[i]) diff++; }
             if (diff !== 1) { message.innerText = "Verander exact 1 letter!"; return; }
@@ -343,10 +370,8 @@
 
         function updateStats() {
             const todayStr = new Date().toDateString();
-            if (stats.lastSolvedDate === todayStr) return; // Al geregistreerd vandaag
+            if (stats.lastSolvedDate === todayStr) return; 
 
-            // Bereken extra gissingen t.o.v de par (Best Solution)
-            // Als je het in 5 stappen doet en par=5, dan is extra=0.
             const totalSteps = history.length - 1;
             let extraGuesses = totalSteps - BEST_SOLUTION_STEPS;
             if (extraGuesses < 0) extraGuesses = 0;
@@ -354,7 +379,6 @@
             stats.wins += 1;
             stats.totalExtraGuesses += extraGuesses;
             
-            // Update streak
             const yesterdayStr = new Date(Date.now() - 86400000).toDateString();
             if (stats.lastSolvedDate === yesterdayStr) {
                 stats.streak += 1;
@@ -363,28 +387,26 @@
             }
             if (stats.streak > stats.bestStreak) stats.bestStreak = stats.streak;
 
-            // Distributie opslaan
             const distKey = extraGuesses >= 6 ? "6+" : extraGuesses.toString();
             stats.distribution[distKey] = (stats.distribution[distKey] || 0) + 1;
             stats.lastSolvedDate = todayStr;
 
             localStorage.setItem('reetle_stats', JSON.stringify(stats));
-            localStorage.setItem('reetle_current_extra', distKey); // Onthoud de huidige score voor de grafiekkleur
+            localStorage.setItem('reetle_current_extra', distKey); 
         }
 
         function toggleModal(show) {
             const modal = document.getElementById('stats-modal');
             if (show) {
-                // Vul data in modal
                 document.getElementById('modal-route-title').innerText = `${history[0].toUpperCase()} to REET`;
                 document.getElementById('modal-guesses').innerText = history.length - 1;
+                document.getElementById('modal-best').innerText = BEST_SOLUTION_STEPS;
                 
                 document.getElementById('stat-wins').innerText = stats.wins;
                 document.getElementById('stat-avg').innerText = stats.wins > 0 ? (stats.totalExtraGuesses / stats.wins).toFixed(2) : 0;
                 document.getElementById('stat-streak').innerText = stats.streak;
                 document.getElementById('stat-best').innerText = stats.bestStreak;
 
-                // Bouw distributiebars
                 const distContainer = document.getElementById('dist-container');
                 distContainer.innerHTML = '';
                 const maxVal = Math.max(...Object.values(stats.distribution), 1);
@@ -393,7 +415,6 @@
                 Object.keys(stats.distribution).forEach(key => {
                     const val = stats.distribution[key];
                     const pct = (val / maxVal) * 100;
-                    
                     const isCurrentWin = (key === currentExtraKey);
 
                     distContainer.innerHTML += `
@@ -417,26 +438,20 @@
                 const now = new Date();
                 const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
                 const diff = tomorrow - now;
-
                 const hours = String(Math.floor(diff / 3600000)).padStart(2, '0');
                 const minutes = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
                 const seconds = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
-
                 document.getElementById('modal-countdown').innerText = `Nieuw woord over: ${hours}:${minutes}:${seconds}`;
             }, 1000);
         }
 
         function copyResults() {
             const steps = history.length - 1;
-            let text = `REETLE - ${history[0].toUpperCase()} to REET in ${steps} stappen! 🚽\n`;
-            history.forEach((w, i) => {
-                text += `${i + 1}. ${w.toUpperCase()}\n`;
-            });
-            text += "Speel ook mee op Reetle.io!";
+            let text = `REETLE - ${history[0].toUpperCase()} to REET in ${steps} stappen! 🚽\n(Beste route: ${BEST_SOLUTION_STEPS})\n\n`;
+            history.forEach((w, i) => { text += `${i + 1}. ${w.toUpperCase()}\n`; });
+            text += "\nSpeel ook mee op Reetle.io!";
             
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Resultaten gekopieerd naar klembord!");
-            });
+            navigator.clipboard.writeText(text).then(() => { alert("Resultaten gekopieerd naar klembord!"); });
         }
 
         document.getElementById('word-input').addEventListener('keypress', function(e) {
