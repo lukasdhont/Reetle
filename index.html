@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>REETLE - TEST MODUS</title>
+    <title>Reetle - Get to REET!</title>
     <style>
         :root {
             --primary: #d4a373;
@@ -11,10 +11,12 @@
             --tile-border: #1a1a1a; /* Zwarte randen voor de vakjes */
             --tile-bg: transparent; /* Zelfde achtergrondkleur als de pagina */
             --text-color: #1a1a1a;
-            --correct-pink: #f8cccc; 
+            /* De aangepaste, warmere huidskleur */
+            --skin-tone: #fbe0cc; 
             --keyboard-bg: #d3d6da;
             --key-bg: #ffffff;
             --key-text: #1a1a1a;
+            /* Success groen wordt niet meer gebruikt op de tiles, maar we houden de variabele */
             --success: #52b788;
         }
         
@@ -39,6 +41,7 @@
             font-size: 2rem;
             letter-spacing: 1px;
             text-align: center;
+            /* De capitalization is nu in de HTML aangepast, geen text-transform meer nodig */
         }
         
         #test-indicator {
@@ -75,8 +78,7 @@
             align-items: center;
             justify-content: flex-start;
             margin-bottom: 10px;
-            mask-image: linear-gradient(to top, black 85%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to top, black 85%, transparent 100%);
+            /* De "mist" mask-image is verwijderd */
             overflow-y: auto; 
             padding-top: 10px;
         }
@@ -114,12 +116,16 @@
             transition: background-color 0.2s, border-color 0.2s;
         }
 
-        /* Startwoord speciale opmaak is verwijderd, eindwoord is nog wel groen */
-        .word-row.end .tile { border-color: var(--success); color: var(--success); background-color: #e6f7ef; }
+        /* Winstwoord is nu volledig in huidskleur */
+        .word-row.end .tile { 
+            border-color: var(--skin-tone); 
+            color: #1a1a1a; 
+            background-color: var(--skin-tone); 
+        }
         
         .tile.correct-pos {
-            background-color: var(--correct-pink);
-            border-color: var(--correct-pink);
+            background-color: var(--skin-tone);
+            border-color: var(--skin-tone);
             color: #1a1a1a !important; 
         }
 
@@ -247,7 +253,7 @@
 </head>
 <body>
 
-    <h1>REETLE</h1>
+    <h1>Reetle</h1>
     <div id="test-indicator">[TEST MODUS]</div>
     <div class="target-box">DOEL: REET</div>
 
