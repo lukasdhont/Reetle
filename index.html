@@ -220,6 +220,9 @@
         let gameSolved = false;
         let BEST_SOLUTION_STEPS = 0;
 
+        // DE BLACKLIST: HIER KAN JE ZELF WOORDEN TOEVOEGEN DIE ERUIT MOETEN
+        const BLACKLIST = ["ried", "nijk"]; 
+
         let stats = JSON.parse(localStorage.getItem('reetle_stats')) || {
             wins: 0, streak: 0, bestStreak: 0, totalExtraGuesses: 0,
             distribution: {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, "6+":0},
@@ -233,10 +236,11 @@
                 
                 WORD_LIST = text.split('\n')
                     .map(word => word.trim().toLowerCase())
-                    .filter(word => word.length === 4 && /^[a-z]+$/.test(word));
+                    // Filter op basis van lengte, letters én controleer of het woord NIET in de blacklist staat
+                    .filter(word => word.length === 4 && /^[a-z]+$/.test(word) && !BLACKLIST.includes(word));
 
                 if (!WORD_LIST.includes(TARGET_WORD)) WORD_LIST.push(TARGET_WORD);
-                WORD_SET = new Set(WORD_LIST); // Gebruikt voor snelle validatie in algoritme
+                WORD_SET = new Set(WORD_LIST); 
 
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('game-container').classList.remove('hidden');
@@ -257,7 +261,6 @@
             while (queue.length > 0) {
                 let current = queue.shift();
                 
-                // Genereer alle mogelijke 1-letter variaties van het huidige woord
                 for (let i = 0; i < 4; i++) {
                     for (let j = 0; j < 26; j++) {
                         let char = alphabet[j];
@@ -273,7 +276,7 @@
                     }
                 }
             }
-            return -1; // Geen route mogelijk
+            return -1; 
         }
 
         function initDailyGame() {
@@ -287,14 +290,12 @@
             let startWord;
             let minSteps;
 
-            // Zoek een woord, en check met het algoritme of de speler REET überhaupt kán bereiken
             do {
                 startWord = WORD_LIST[index];
                 minSteps = getShortestPath(startWord, TARGET_WORD);
                 index = (index + 1) % WORD_LIST.length;
             } while (startWord === TARGET_WORD || minSteps === -1);
 
-            // Sla de kortste route op in het geheugen
             BEST_SOLUTION_STEPS = minSteps;
 
             const savedGame = JSON.parse(localStorage.getItem('reetle_current_game'));
