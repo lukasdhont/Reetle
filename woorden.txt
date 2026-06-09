@@ -33,6 +33,7 @@ apex
 apin
 aren
 arts
+aten
 aula
 auto
 aura
@@ -62,6 +63,7 @@ been
 beer
 beet
 beft
+belt
 bekt
 belg
 bent
@@ -115,6 +117,7 @@ bolt
 boks
 bond
 bonk
+bong
 bont
 bood
 boog
@@ -228,6 +231,7 @@ doek
 doel
 doem
 doen
+doet
 doek
 dokt
 dolf
@@ -287,6 +291,8 @@ dure
 duts
 durf
 duur
+duwt
+duet
 ebde
 echo
 echt
@@ -332,10 +338,12 @@ echo
 euro
 eeuw
 eind
+eist
 erop
 erin
 eten
 eter
+etst
 faal
 faam
 fair
@@ -504,7 +512,7 @@ hack
 haha
 hakt
 half
-hako
+halo
 hals
 halt
 hand
@@ -671,6 +679,7 @@ kelk
 kelp
 kelt
 kemp
+kent
 kerf
 kerk
 kerm
@@ -828,7 +837,6 @@ lelt
 lepe
 leut
 lens
-lent
 leuk
 leus
 licht
@@ -868,6 +876,7 @@ lolt
 lomp
 lont
 lonk
+long
 lood
 loof
 loog
@@ -892,6 +901,7 @@ luur
 lust
 luwe
 luwt
+lult
 luxe
 lymf
 lynx
@@ -915,6 +925,7 @@ mans
 mals
 mand
 mast
+mars
 mauw
 maxi
 mayo
@@ -968,6 +979,7 @@ moes
 moet
 moge
 mokt
+molt
 molk
 momt
 mond
@@ -977,6 +989,7 @@ moor
 moos
 moot
 mops
+mopt
 mors
 mouw
 muft
@@ -1088,6 +1101,7 @@ pens
 pept
 perk
 pers
+pest
 peso
 peuk
 peul
@@ -1144,6 +1158,7 @@ pret
 prik
 pril
 prof
+prot
 prop
 prul
 prut
@@ -1185,7 +1200,6 @@ rede
 redt
 reef
 reeg
-reek
 reep
 rees
 reet
@@ -1194,10 +1208,10 @@ reis
 rekt
 rept
 remt
-rend
 rent
 reuk
 reus
+rest
 rief
 riek
 riem
@@ -1307,6 +1321,7 @@ soja
 solo
 soms
 somt
+solt
 sopt
 span
 spam
@@ -1551,6 +1566,7 @@ wang
 want
 warm
 wars
+wast
 watt
 wauw
 weed
